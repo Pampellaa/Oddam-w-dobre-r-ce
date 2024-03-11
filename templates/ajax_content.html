@@ -1,0 +1,13 @@
+{% for fundation in fundations_page.object_list %}
+
+            <li>
+            <div class="col">
+              <div class="title">{{ fundation.name}}</div>
+              <div class="subtitle">{{ fundation.description}}</div>
+            </div>
+                {% for cat in fundation.categories.all %}
+            <div class="col"><div class="text">{{ cat.name}}</div></div>
+                    {% endfor %}
+            </li>
+            {% endfor %}
+

@@ -1,0 +1,15 @@
+<span class="step-links">
+    {% if fundations_page.has_previous %}
+        <a href="?page={{ fundations_page.previous_page_number }}">&laquo; previous</a>
+    {% endif %}
+    {% for i in fundations_page.paginator.page_range %}
+        {% if fundations_page.number == i %}
+            <span class="current">{{ i }}</span>
+        {% else %}
+            <a href="?page={{ i }}">{{ i }}</a>
+        {% endif %}
+    {% endfor %}
+    {% if fundations_page.has_next %}
+        <a href="?page={{ fundations_page.next_page_number }}">next &raquo;</a>
+    {% endif %}
+</span>

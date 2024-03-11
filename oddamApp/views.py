@@ -1,6 +1,10 @@
+from django.contrib.auth import login
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Sum
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.views import View
 
 from oddamApp.models import Donation, Institution
@@ -28,6 +32,12 @@ class LandingPageView(View):
 
         ctx = {'total_bags': total_bags, 'supported_organizations': supported_organizations, 'fundations': fundations,
               'fundations_page':fundations_page, 'organizations_page': organizations_page, 'collections_page': collections_page }
+
+        # if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        #     html_content = render_to_string('ajax_content.html', ctx)
+        #     html_pagination = render_to_string('ajax_pagination.html', ctx)
+        #     return JsonResponse({'html_content': html_content, 'html_pagination': html_pagination})
+
         return render(request, 'index.html', ctx)
 
 class AddDonationView(View):
@@ -41,4 +51,14 @@ class LoginView(View):
 class RegisterView(View):
     def get(self, request):
         return render(request, 'register.html')
+    def post(self, request):
+        username = request.POST.get('email')
+        password = request.POST.get('password')
+        first_name = request.POST.get('name')
+        last_name = request.POST.get('surname')
+        user = User.objects.create(username=username, first_name=first_name, last_name=last_name, email=username)
+        user.set_password(password)
+        user.save()
+        login(request, user)
+        return redirect('login')
 

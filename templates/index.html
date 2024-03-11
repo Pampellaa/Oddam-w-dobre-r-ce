@@ -84,7 +84,7 @@
       <div class="help--slides active" data-id="1">
         <p>W naszej bazie znajdziesz listę zweryfikowanych Fundacji, z którymi współpracujemy. Możesz sprawdzić czym się zajmują, komu pomagają i czego potrzebują.</p>
         
-        <ul class="help--slides-items">
+        <ul class="help--slides-items help--slides-items" id="ajax-content">
             {% for fundation in fundations_page %}
             <li>
             <div class="col">
@@ -97,7 +97,7 @@
             </li>
             {% endfor %}
         </ul>
-          <div class="help--slides-pagination">
+          <div class="help--slides-pagination" id="ajax-pagination">
                 <span class="step-links">
                     {% if fundations_page.has_previous %}
                         <a href="?page={{ fundations_page.previous_page_number }}">&laquo; previous</a>
@@ -204,3 +204,30 @@
       </div>
     </section>
 {% endblock %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $(document).on('click', '.ajax-pagination a', function(e){
+            e.preventDefault();
+            console.log('Clicked on pagination link');  // Dodaj ten log
+            var page = $(this).attr('href').split('=')[1];
+            loadContent(page);
+        });
+
+        function loadContent(page){
+            console.log('Loading content for page: ' + page);  // Dodaj ten log
+            $.ajax({
+                url: '?page=' + page,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data){
+                    $('#ajax-content').html(data.html_content);
+                    $('#ajax-pagination').html(data.html_pagination);
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', status, error);  // Dodaj ten log
+                }
+            });
+        }
+    });
+</script>

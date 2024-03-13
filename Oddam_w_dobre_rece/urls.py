@@ -20,9 +20,12 @@ from django.urls import path
 from oddamApp import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', views.LandingPageView.as_view(), name='index'),
     path('add-donation/', views.AddDonationView.as_view(), name='add-donation'),
     path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
     path('register/', views.RegisterView.as_view(), name='register'),
+    path('user-info/', views.UserView.as_view(), name='user-info'),
+
 ]

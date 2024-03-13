@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block headername %}
+<header>
+{% endblock %}
+
+{% block header %}
+</header>
+{% endblock %}
+
+{% block content %}
+<p class="user-info-heading">Informacje o użytkowniku:</p>
+    <div class="user-info">
+        <div class="user-info-item">
+            <span class="user-info-label">Imię:</span>
+            <span class="user-info-value">{{ user.first_name }}</span>
+        </div>
+        <div class="user-info-item">
+            <span class="user-info-label">Nazwisko:</span>
+            <span class="user-info-value">{{ user.last_name }}</span>
+        </div>
+        <div class="user-info-item">
+            <span class="user-info-label">Email:</span>
+            <span class="user-info-value">{{ user.email }}</span>
+        </div>
+    </div>
+<p class="user-info-heading">Lista przekazanych darów:</p>    
+        {% for donation in donations %}
+    <div class="user-info">
+        <div class="user-info-item">
+            <span class="user-info-label">Ilość worków:</span>
+            <span class="user-info-value">{{ donation.quantity }}</span>
+        </div>
+        <div class="user-info-item">
+            <span class="user-info-label">Organizacja:</span>
+            <span class="user-info-value">{{ donation.institution }}</span>
+        </div>
+        <div class="user-info-item">
+            <span class="user-info-label">Kategorie:</span>
+            <span class="user-info-value">{% for category in donation.categories.all %} {{ category.name }},{% endfor %}</span>
+        </div>
+            <div class="user-info-item">
+            <span class="user-info-label">Data zabrania:</span>
+            <span class="user-info-value">{{ donation.pick_up_date }}</span>
+        </div>
+    </div>
+    {% endfor %}
+
+{% endblock %}

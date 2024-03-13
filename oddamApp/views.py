@@ -1,4 +1,5 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Sum
@@ -7,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.views import View
 
-from oddamApp.models import Donation, Institution
+from oddamApp.models import Donation, Institution, Category
 
 
 class LandingPageView(View):
@@ -42,11 +43,28 @@ class LandingPageView(View):
 
 class AddDonationView(View):
     def get(self, request):
-        return render(request, 'form.html')
+        categories = Category.objects.all()
+        institutions = Institution.objects.all()
+        ctx = {'categories':categories, 'institutions': institutions}
+        return render(request, 'form.html', ctx)
 
 class LoginView(View):
     def get(self, request):
         return render(request, 'login.html')
+    def post(self, request):
+        username = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            return redirect('register')
+
+class LogoutView(View):
+        def get(self, request):
+            logout(request)
+            return redirect('index')
 
 class RegisterView(View):
     def get(self, request):
@@ -62,3 +80,10 @@ class RegisterView(View):
         login(request, user)
         return redirect('login')
 
+class UserView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        donations = Donation.objects.filter(user=user)
+        # total_bags = donation.aggregate(total_bags=Sum('quantity'))['total_bags']
+
+        return render(request,'user_info.html',{'user':user, 'donations':donations})

@@ -91,9 +91,13 @@
               <div class="title">{{ fundation.name}}</div>
               <div class="subtitle">{{ fundation.description}}</div>
             </div>
+            <div class="col">
+                <div class="text">
                 {% for cat in fundation.categories.all %}
-            <div class="col"><div class="text">{{ cat.name}}</div></div>
-                    {% endfor %}
+                    {{ cat.name}}
+                {% endfor %}
+                </div>
+            </div>
             </li>
             {% endfor %}
         </ul>
@@ -134,9 +138,13 @@
                       <div class="title">{{ fundation.name}}</div>
                       <div class="subtitle">{{ fundation.description}}</div>
                     </div>
+                    <div class="col">
+                        <div class="text">
                         {% for cat in fundation.categories.all %}
-                    <div class="col"><div class="text">{{ cat.name}}</div></div>
-                            {% endfor %}
+                            {{ cat.name}}
+                        {% endfor %}
+                        </div>
+                    </div>
                     </li>
                 {% endif %}
             {% endfor %}
@@ -174,9 +182,13 @@
                       <div class="title">{{ fundation.name}}</div>
                       <div class="subtitle">{{ fundation.description}}</div>
                     </div>
+                    <div class="col">
+                        <div class="text">
                         {% for cat in fundation.categories.all %}
-                    <div class="col"><div class="text">{{ cat.name}}</div></div>
-                            {% endfor %}
+                            {{ cat.name}}
+                        {% endfor %}
+                        </div>
+                    </div>
                     </li>
                 {% endif %}
             {% endfor %}

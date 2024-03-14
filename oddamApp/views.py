@@ -14,7 +14,8 @@ from oddamApp.models import Donation, Institution, Category
 class LandingPageView(View):
     def get(self, request):
         total_bags = Donation.objects.aggregate(total_bags=Sum('quantity'))['total_bags']
-        supported_organizations = Institution.objects.count()
+        supported_organizations = Institution.objects.filter(donation__isnull=False).distinct().count()
+
 
         fundations = Institution.objects.filter(type=1)
         paginator = Paginator(fundations, 5)

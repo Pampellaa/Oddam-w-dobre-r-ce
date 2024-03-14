@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block headername %}
+<header>
+{% endblock %}
+
+{% block header %}
+</header>
+{% endblock %}
+
+{% block content %}
+<h2>Edycja danych użytkownika</h2>
+{% for message in messages %}
+<div class="alert alert-success" role="alert">
+    {{ message }}
+</div>
+{% endfor %}
+<form method="post">
+  {% csrf_token %}
+      <div class="form-group">
+        {{ user_form.as_p }}
+    </div>
+  <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+</form>
+    <h2>Zmiana hasła</h2>
+    {% for message in messages %}
+<div class="alert alert-success" role="alert">
+    {{ message }}
+</div>
+{% endfor %}
+<form method="post">
+  {% csrf_token %}
+    <div class="form-group">
+        {{ password_form.as_p }}
+    </div>
+  <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+</form>
+{% endblock %}

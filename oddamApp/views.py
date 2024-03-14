@@ -1,4 +1,6 @@
+from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -8,6 +10,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.views import View
 
+from oddamApp.forms import UserForm, PasswordForm
 from oddamApp.models import Donation, Institution, Category
 
 
@@ -86,5 +89,54 @@ class UserView(LoginRequiredMixin, View):
         user = request.user
         donations = Donation.objects.filter(user=user)
         # total_bags = donation.aggregate(total_bags=Sum('quantity'))['total_bags']
+        non_taken_donations = []
+        taken_donations = []
+        for donation in donations:
+            if donation.is_taken:
+                taken_donations.append(donation)
+            else:
+                non_taken_donations.append(donation)
+        ctx = {'user':user, 'donations':donations, 'non_taken_donations':non_taken_donations, 'taken_donations':taken_donations}
+        return render(request,'user_info.html',ctx)
+    def post(self, request):
+        donation_id = request.POST.get('donation_id')
+        donation = Donation.objects.get(id=donation_id)
+        donation.is_taken = not donation.is_taken
+        donation.save()
+        return redirect('user-info')
 
-        return render(request,'user_info.html',{'user':user, 'donations':donations})
+
+
+class UserEditView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = request.user
+        user_form = UserForm(instance=request.user)
+        password_form = PasswordForm()
+        return render(request, 'user_edit.html', {'user_form': user_form, 'password_form': password_form})
+
+    def post(self, request):
+        user_form = UserForm(request.POST, instance=request.user)
+        password_form = PasswordForm(request.POST)
+
+        if password_form.is_valid():
+            password = password_form.cleaned_data.get('new_password')
+            if password:
+                request.user.set_password(password)
+                request.user.save()
+                messages.success(request, 'Hasło zostało zmienione')
+                user = authenticate(username=request.user.username, password=password)
+                if user is not None:
+                    login(request, user)
+                return redirect('user-edit')
+            else:
+                messages.error(request, 'Nowe hasło nie może być puste')
+
+        if user_form.is_valid():
+            user_form.save()
+            messages.success(request, 'Dane zostały zmienione')
+            return redirect('user-edit')
+        else:
+            messages.error(request, 'Wystąpił błąd podczas zmiany danych')
+
+        return render(request, 'user_edit.html', {'user_form': user_form, 'password_form': password_form})
+
